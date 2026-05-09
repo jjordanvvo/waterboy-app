@@ -1248,6 +1248,11 @@ function renderSubPlanScreen() {
 
 function selectPlan(planId) {
   if (!currentCustomer) return;
+  const termsChk = document.getElementById('sub-terms-agree');
+  if (!termsChk || !termsChk.checked) {
+    Toast.warning('Agreement Required', 'Please agree to the Terms and Conditions before selecting a plan.');
+    return;
+  }
   const allPlans = [...SUBSCRIPTION_PLANS.monthly, ...SUBSCRIPTION_PLANS.alkaline];
   const plan = allPlans.find(p => p.id === planId);
   if (!plan) return;
@@ -1787,7 +1792,26 @@ function processGooglePay() {
 window.processGooglePay = processGooglePay;
 
 function openTermsModal() {
+  const ind  = document.getElementById('tc-bottom-indicator');
+  const circ = document.getElementById('tc-check-circle');
+  if (ind)  ind.style.opacity = '0';
+  if (circ) circ.style.transform = 'scale(0.6)';
+
   Modal.open('terms-modal');
+
+  setTimeout(function () {
+    const body = document.getElementById('terms-modal-body');
+    if (!body) return;
+    body.scrollTop = 0;
+    function onTcScroll() {
+      if (body.scrollTop + body.clientHeight >= body.scrollHeight - 80) {
+        if (ind)  { ind.style.opacity = '1'; }
+        if (circ) { circ.style.transform = 'scale(1)'; }
+        body.removeEventListener('scroll', onTcScroll);
+      }
+    }
+    body.addEventListener('scroll', onTcScroll);
+  }, 80);
 }
 window.openTermsModal = openTermsModal;
 
@@ -2163,6 +2187,10 @@ function openRentalFlow(modelId) {
   rfSelectedModel = modelId || null;
   rfSelectedTier  = null;
 
+  const rfTerms = document.getElementById('rf-terms-agree');
+  if (rfTerms) rfTerms.checked = false;
+  updateRfPayBtn();
+
   const flow = document.getElementById('rental-flow');
   if (flow) { flow.style.display = 'flex'; flow.style.flexDirection = 'column'; }
   document.body.style.overflow = 'hidden';
@@ -2301,6 +2329,23 @@ function updateRfNextBtn() {
 }
 window.updateRfNextBtn = updateRfNextBtn;
 
+function updateRfPayBtn() {
+  const btn = document.getElementById('rf-pay-btn');
+  const chk = document.getElementById('rf-terms-agree');
+  if (btn) btn.disabled = !(chk && chk.checked);
+}
+window.updateRfPayBtn = updateRfPayBtn;
+
+function rfDigitalPay() {
+  const chk = document.getElementById('rf-terms-agree');
+  if (!chk || !chk.checked) {
+    Toast.warning('Agreement Required', 'Please agree to the Terms and Conditions before paying.');
+    return;
+  }
+  rfStartRental();
+}
+window.rfDigitalPay = rfDigitalPay;
+
 function rfGoTo(n) { goToRfStep(n); }
 window.rfGoTo = rfGoTo;
 
@@ -2325,6 +2370,12 @@ function rfBack() {
 window.rfBack = rfBack;
 
 function rfProcessPayment() {
+  const termsChk = document.getElementById('rf-terms-agree');
+  if (!termsChk || !termsChk.checked) {
+    Toast.warning('Agreement Required', 'Please agree to the Terms and Conditions before paying.');
+    return;
+  }
+
   const cardNum  = document.getElementById('rf-card-num')?.value.replace(/\s/g,'');
   const cardExp  = document.getElementById('rf-card-exp')?.value;
   const cardCvv  = document.getElementById('rf-card-cvv')?.value;

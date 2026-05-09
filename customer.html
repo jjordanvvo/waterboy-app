@@ -528,6 +528,11 @@
           <div class="account-menu-body"><div class="account-menu-label">Settings</div><div class="account-menu-sub">Preferences &amp; notifications</div></div>
           <div class="account-menu-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
+        <div class="account-menu-item" onclick="openTermsModal()">
+          <div class="account-menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+          <div class="account-menu-body"><div class="account-menu-label">Terms and Conditions</div><div class="account-menu-sub">Review our policies</div></div>
+          <div class="account-menu-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
         <div class="account-menu-item" id="logout-menu-item">
           <div class="account-menu-icon" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
           <div class="account-menu-body"><div class="account-menu-label" style="color:var(--danger)">Sign Out</div></div>
@@ -630,6 +635,12 @@
         </div>
       </div>
       <div id="sub-plan-list" style="display:flex;flex-direction:column;gap:12px"></div>
+      <div style="margin-top:20px;padding:14px 16px;background:var(--blue-card);border:1px solid var(--blue-border);border-radius:var(--radius-md)">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.875rem;color:var(--white-70)">
+          <input type="checkbox" id="sub-terms-agree" style="width:16px;height:16px;accent-color:var(--cyan)">
+          I agree to the <a href="#" onclick="openTermsModal();return false;" style="color:var(--cyan)">Terms and Conditions</a>
+        </label>
+      </div>
     </div>
   </div>
 
@@ -855,11 +866,11 @@
           <div id="rf-order-summary" style="font-size:.875rem;color:var(--white-70);line-height:2"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-          <button class="btn" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);color:var(--white-90);display:flex;align-items:center;justify-content:center;gap:6px" onclick="rfStartRental()">
+          <button class="btn" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);color:var(--white-90);display:flex;align-items:center;justify-content:center;gap:6px" onclick="rfDigitalPay()">
             <svg viewBox="0 0 50 20" style="width:36px;height:14px" fill="var(--white-90)"><path d="M8.9 4.6c.5-.6 1-1.5.9-2.4-.9.1-2 .6-2.6 1.3-.6.6-1.1 1.5-1 2.4 1 .1 1.9-.5 2.7-1.3zm.8 1.2c-1.5-.1-2.8.8-3.5.8-.7 0-1.8-.8-3-.8C1.5 5.9 0 7.2 0 9.7c0 1.5.6 3 1.3 4 .7 1 1.3 1.8 2.3 1.8 1 0 1.4-.6 2.6-.6 1.2 0 1.6.6 2.7.6 1 0 1.7-.9 2.3-1.8.5-.8.7-1.5.7-1.5s-1.8-.7-1.8-2.6c0-1.7 1.4-2.5 1.4-2.5s-.8-1.3-2.6-1.3z"/></svg>
             Apple Pay
           </button>
-          <button class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px" onclick="rfStartRental()">
+          <button class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px" onclick="rfDigitalPay()">
             <span style="font-weight:700">G</span> Pay
           </button>
         </div>
@@ -871,7 +882,13 @@
             <div class="form-group"><label class="form-label">CVV</label><input id="rf-card-cvv" type="text" class="form-input" placeholder="123" maxlength="4" /></div>
           </div>
         </div>
-        <button class="btn btn-primary btn-full btn-lg" id="rf-pay-btn" onclick="rfProcessPayment()" style="background:var(--cyan);font-size:1.125rem">Start Rental —</button>
+        <div style="margin-bottom:14px">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.8125rem;color:var(--white-70)">
+            <input type="checkbox" id="rf-terms-agree" style="width:16px;height:16px;accent-color:var(--cyan)" onchange="updateRfPayBtn()">
+            I agree to the <a href="#" onclick="openTermsModal();return false;" style="color:var(--cyan)">Terms and Conditions</a>
+          </label>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="rf-pay-btn" onclick="rfProcessPayment()" style="background:var(--cyan);font-size:1.125rem" disabled>Start Rental —</button>
       </div>
     </div>
 
@@ -1013,7 +1030,7 @@
         <div style="margin-top:16px">
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.8125rem;color:var(--white-70)">
             <input type="checkbox" id="terms-agree" style="width:16px;height:16px;accent-color:var(--cyan)" onchange="updatePayBtn()">
-            I agree to the <a href="#" onclick="openTermsModal();return false;" style="color:var(--cyan)">Terms of Service</a>
+            I agree to the <a href="#" onclick="openTermsModal();return false;" style="color:var(--cyan)">Terms and Conditions</a>
           </label>
         </div>
 
@@ -1204,24 +1221,86 @@
   </div>
 </div>
 
-<!-- ── Terms Modal ───────────────────────────────────────────── -->
+<!-- ── Terms and Conditions Modal ─────────────────────────────── -->
 <div id="terms-modal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Terms of Service</span>
+  <div class="modal" style="max-width:600px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-header" style="flex-shrink:0">
+      <span class="modal-title">Terms and Conditions</span>
       <button class="modal-close" data-close-modal="terms-modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="modal-body" style="font-size:.875rem;color:var(--white-70);line-height:1.7">
-      <p><strong style="color:var(--white-90)">Waterboy Delivery — Terms of Service</strong></p>
-      <p style="margin-top:12px">By using Waterboy Delivery, you agree to the following terms:</p>
-      <p style="margin-top:10px"><strong>Orders:</strong> All orders are subject to availability and delivery zone coverage. Orders must be placed by 6pm for next-day delivery.</p>
-      <p style="margin-top:10px"><strong>Delivery:</strong> We deliver Monday–Saturday. Delivery windows are estimates and may vary due to route conditions. A signature may be required.</p>
-      <p style="margin-top:10px"><strong>Bottles &amp; Deposits:</strong> A $2.00 deposit applies to each 5-gallon jug. Deposits are fully refunded upon bottle return.</p>
-      <p style="margin-top:10px"><strong>Subscriptions:</strong> Recurring deliveries can be paused or cancelled at any time. Changes must be made 24 hours before the scheduled delivery.</p>
-      <p style="margin-top:10px"><strong>Payments:</strong> All payments are processed securely. We do not store full card numbers on our servers.</p>
-      <p style="margin-top:10px"><strong>Contact:</strong> (916) 619-3218 | info@waterboydelivery.com</p>
+    <div class="modal-body" id="terms-modal-body" style="flex:1;overflow-y:auto">
+      <p style="font-weight:800;font-size:1rem;color:var(--white-90);text-align:center;margin-bottom:4px">WATERBOY DELIVERY — TERMS AND CONDITIONS</p>
+      <p style="text-align:center;color:var(--white-40);font-size:.8125rem;margin-bottom:28px">Last Updated: May 2026</p>
+
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">1. GENERAL</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">By placing an order through Waterboy Delivery, you agree to these Terms and Conditions. Please read them carefully before completing your purchase.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">2. PRODUCTS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">All products are sold as-is. Water jugs are filled with purified or alkaline water as described. Bottles, containers, and accessories are non-refundable once opened or used. Water dispensers sold are covered by the manufacturer's warranty.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">3. PRICING</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">All prices are listed in USD and are subject to change without prior notice. Prices displayed at the time of purchase will be honored for that transaction. Promotional codes cannot be combined unless stated otherwise.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">4. ORDERS &amp; DELIVERY</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">Orders are processed within 1–2 business days. Delivery is available Monday through Saturday within our service zones. Delivery fees are based on distance from our Elk Grove location: Zone 1 (0–3 mi) FREE, Zone 2 (3–6 mi) $4.99, Zone 3 (6–9 mi) $9.99. We do not deliver beyond 9 miles. Delivery times are estimates and not guaranteed. Waterboy Delivery is not responsible for delays caused by weather, traffic, or circumstances beyond our control.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">5. WATER JUG DEPOSITS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">A refundable deposit is charged per jug at the time of purchase. Deposits are credited back when empty jugs are returned in good condition. Damaged or unreturned jugs will result in forfeiture of the deposit.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">6. SUBSCRIPTIONS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">Subscription plans are billed monthly on the date of initial enrollment. You may pause, modify, or cancel your subscription at any time through the app or by contacting us. Cancellations take effect at the end of the current billing cycle. No partial refunds for unused portions of the current month.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">7. DISPENSER RENTALS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">Rental agreements are binding for the selected term. A $50 refundable security deposit is required at the start of the rental. Early termination incurs a fee equal to one month's rental rate. The renter is responsible for damage beyond normal wear and tear. Free maintenance is provided for manufacturer defects. Dispensers must be returned in working condition at the end of the rental term.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">8. PAYMENTS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">We accept major credit cards, debit cards, Apple Pay, and Google Pay. All payments are processed securely through Stripe. By providing payment information, you authorize Waterboy Delivery to charge the specified amount. Failed payments may result in order cancellation or service suspension.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">9. REFUNDS &amp; RETURNS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">Refund requests must be made within 7 days of delivery. Unopened and unused products may be returned for a full refund. Opened or used products are non-refundable. Defective products will be replaced at no charge. Refunds are processed within 5–10 business days.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">10. PRIVACY</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">We collect personal information solely for order processing, delivery, and communication. We do not sell or share your information with third parties. Payment information is encrypted and handled by Stripe. For full details, see our Privacy Policy.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">11. LIABILITY</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">Waterboy Delivery is not liable for any indirect, incidental, or consequential damages arising from the use of our products or services. Our total liability shall not exceed the amount paid for the specific product or service in question.</p>
+      </div>
+      <div style="margin-bottom:18px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">12. MODIFICATIONS</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">We reserve the right to update these Terms and Conditions at any time. Changes will be posted in the app and on our website. Continued use of our services constitutes acceptance of any modifications.</p>
+      </div>
+      <div style="margin-bottom:24px">
+        <p style="font-size:.75rem;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-bottom:5px">13. CONTACT</p>
+        <p style="font-size:.875rem;color:var(--white-70);line-height:1.75">For questions regarding these Terms and Conditions, contact us at:<br>
+        <strong style="color:var(--white-90)">Waterboy Delivery</strong><br>
+        7119 Elk Grove Blvd, Elk Grove, CA 95758<br>
+        Phone: (916) 619-3218<br>
+        Email: info@waterboydelivery.com</p>
+      </div>
+      <div style="border-top:1px solid var(--blue-border);padding-top:18px;margin-top:4px">
+        <p style="font-size:.8125rem;color:var(--white-50);line-height:1.75;font-style:italic">By completing your purchase, you acknowledge that you have read, understood, and agree to these Terms and Conditions.</p>
+      </div>
+      <div id="tc-bottom-indicator" style="text-align:center;padding:24px 0 6px;opacity:0;transition:opacity .5s ease">
+        <div id="tc-check-circle" style="width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;transform:scale(0.6);transition:transform .5s cubic-bezier(.175,.885,.32,1.275)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" style="width:26px;height:26px"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <p style="font-size:.875rem;font-weight:600;color:var(--success)">I have read and agree to these Terms and Conditions.</p>
+      </div>
     </div>
-    <div class="modal-footer"><button class="btn btn-primary" data-close-modal="terms-modal">I Understand</button></div>
+    <div class="modal-footer" style="flex-shrink:0">
+      <button class="btn btn-primary" data-close-modal="terms-modal">Close</button>
+    </div>
   </div>
 </div>
 
